@@ -76,6 +76,34 @@ def build_features(df):
     # Different sectors have different return dynamics
     features['SECTOR'] = df['SECTOR']
     features['INDUSTRY'] = df['INDUSTRY']
+
+    # ── 9. SECTOR-CONDITIONAL FEATURES ────────────────────────────────
+    # For each stock, compute its return relative to its sector average
+    # This captures whether a stock is outperforming or underperforming peers
+    # The benchmark's strongest feature was a sector conditional mean
+    for lag in [1, 2, 3, 5]:
+        col = f'RET_{lag}'
+        sector_mean = df.groupby(['DATE', 'SECTOR'])[col].transform('mean')
+        features[f'sector_mean_ret_{lag}'] = sector_mean
+        features[f'ret_vs_sector_{lag}'] = df[col] - sector_mean
+
+    # ── 10. VOLATILITY-NORMALIZED RETURNS ─────────────────────────────
+    # Divide return signals by realized volatility
+    # A -2% move in a 0.5% vol stock is huge. Same move in 5% vol stock is normal.
+    epsilon = 1e-8  # prevent division by zero
+    features['vol_adj_ret_1'] = df['RET_1'] / (features['realized_vol_5'] + epsilon)
+    features['vol_adj_ret_2'] = df['RET_2'] / (features['realized_vol_5'] + epsilon)
+    features['vol_adj_momentum'] = (
+        df[[f'RET_{i}' for i in range(5, 11)]].mean(axis=1) / 
+        (features['realized_vol_20'] + epsilon)
+    )
+    
+    # ── 11. VOLATILITY REGIME ──────────────────────────────────────────
+    # Is volatility increasing or decreasing recently?
+    # Ratio > 1 means volatility picking up — often precedes larger moves
+    features['vol_regime'] = (
+        features['realized_vol_5'] / (features['realized_vol_20'] + epsilon)
+    )
     
     return features
 
@@ -91,3 +119,5 @@ def build_features_train_test(train_df, test_df):
     print(list(X_train.columns))
     
     return X_train, X_test
+
+
