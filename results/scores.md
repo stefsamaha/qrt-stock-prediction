@@ -27,3 +27,20 @@
 - Gap to benchmark: -0.58%
 - Notes: first submission, pipeline validated end to end
 
+## Experiment 2 — Sector Features + Volatility Normalization (CV only)
+- Mean CV accuracy: 51.19%
+- Std: 0.71%
+- Previous mean: 50.91%
+- Improvement: +0.28%
+- New features: sector_mean_ret_1/2/3/5, ret_vs_sector_1/2/3/5, 
+  vol_adj_ret_1/2, vol_adj_momentum, vol_regime
+- Notes: consistent improvement across folds — submit
+
+## Submission 2 — LightGBM v2 (sector + vol features)
+- Public score: 51.30%
+- CV mean: 51.19%
+- Benchmark: 51.31%
+- Gap to benchmark: -0.01%
+- Improvement from v1: +0.57%
+- Notes: sector conditional mean and volatility normalization drove the improvement. Matched benchmark on second submission.
+
