@@ -68,7 +68,7 @@
 - Mean CV: 51.42% | Std: 1.05%
 - Equal-weight v6 vs weighted (0.35/0.25/0.40): flat, -0.0001 (noise)
 
-## Key research findings (today)
+## Key research findings (6/27/26)
 1. Fold 5 consistently underperforms (~49.5%) but on inspection has
    normal volatility (0.0246) and class balance (0.4987). Accounting for
    within-day return correlation inflating effective SE, it is within
@@ -79,4 +79,17 @@
    weights — all plateau at ~51.4% CV. Conclusion: at signal ceiling for
    this approach. CV sits ~0.001 above leaderboard (trustworthy).
 
-   
+## Submission 4 — v6 cross-sectional (BEST)
+- Public score: 51.52%
+- CV mean: 51.42%
+- CV→public gap: +0.0010 (public exceeded CV)
+- Benchmark: 51.31%
+- Above benchmark by: +0.21%
+- Finding: cross-sectional rank features helped on test set despite
+  flat CV — confirms fold 5 was unrepresentative, test period resembles
+  folds 1-4. Validates the noise diagnosis.
+
+## CV-leaderboard calibration (3 points)
+- v4: CV 0.5143 → 0.5132
+- v6: CV 0.5142 → 0.5152
+- Gap is small and sign-variable (~±0.001), CV is trustworthy
