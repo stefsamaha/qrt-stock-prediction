@@ -44,3 +44,13 @@
 - Improvement from v1: +0.57%
 - Notes: sector conditional mean and volatility normalization drove the improvement. Matched benchmark on second submission.
 
+## Experiment 3 — Hyperparameter Tuning
+- CV mean: 51.04% — worse than v2, not submitted
+- Notes: over-regularized, v2 params already well-calibrated
+
+## Experiment 4 — Ensemble (LightGBM + RF + Logistic Regression)
+- CV mean: 51.43%
+- Std: 0.80%
+- Improvement over v2: +0.24%
+- Method: soft voting, average predicted probabilities
+- Notes: consistent improvement across folds 1-4, fold 5 still weak
