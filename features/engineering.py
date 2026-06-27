@@ -104,7 +104,46 @@ def build_features(df):
     features['vol_regime'] = (
         features['realized_vol_5'] / (features['realized_vol_20'] + epsilon)
     )
-    
+
+    # ── 12. CROSS-SECTIONAL RANK FEATURES ─────────────────────────────
+    # Rank each stock against ALL other stocks on the same day.
+    # Target is residual (market-neutral) return, so relative position
+    # matters more than absolute return. This is the core of
+    # cross-sectional equity prediction.
+    for lag in [1, 2, 3, 5]:
+        col = f'RET_{lag}'
+        features[f'rank_ret_{lag}'] = df.groupby('DATE')[col].rank(pct=True)
+
+    # Rank of recent 5-day momentum across all stocks that day
+    recent_mom = df[[f'RET_{i}' for i in range(1, 6)]].mean(axis=1)
+    features['rank_momentum'] = recent_mom.groupby(df['DATE']).rank(pct=True)
+
+    # Rank of volatility — which stocks are most volatile today
+    vol_temp = df[[f'RET_{i}' for i in range(1, 21)]].std(axis=1)
+    features['rank_volatility'] = vol_temp.groupby(df['DATE']).rank(pct=True)
+
+    # ── 13. VOLUME-CONDITIONED REVERSAL ───────────────────────────────
+    # Reversal is stronger after high-volume moves. High volume means
+    # market makers were forced to displace price from fair value,
+    # creating the mispricing that corrects the next day.
+    features['reversal_x_volume'] = -df['RET_1'] * df['VOLUME_1'].abs()
+    features['reversal_x_volume_2'] = -df['RET_2'] * df['VOLUME_2'].abs()
+
+    high_vol_flag = (df['VOLUME_1'] > df['VOLUME_1'].median()).astype(int)
+    features['conditional_reversal'] = -df['RET_1'] * high_vol_flag
+
+    # ── 14. RETURN AND VOLATILITY ACCELERATION ────────────────────────
+    # Is the trend speeding up or slowing down? Deceleration often
+    # precedes reversal — a trend-exhaustion signal. Second-order
+    # information that raw lagged returns do not contain.
+    recent = df[[f'RET_{i}' for i in range(1, 4)]].mean(axis=1)
+    older = df[[f'RET_{i}' for i in range(4, 8)]].mean(axis=1)
+    features['return_acceleration'] = recent - older
+
+    recent_vol = df[[f'RET_{i}' for i in range(1, 6)]].std(axis=1)
+    older_vol = df[[f'RET_{i}' for i in range(6, 11)]].std(axis=1)
+    features['vol_acceleration'] = recent_vol - older_vol
+
     return features
 
 

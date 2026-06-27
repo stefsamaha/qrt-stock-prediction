@@ -54,3 +54,29 @@
 - Improvement over v2: +0.24%
 - Method: soft voting, average predicted probabilities
 - Notes: consistent improvement across folds 1-4, fold 5 still weak
+
+## Submission 3 — Ensemble LightGBM + RF + LR
+- Public score: 51.32%
+- CV mean: 51.43%
+- Benchmark: 51.31%
+- Status: BENCHMARK BEATEN ✓
+- Improvement from v1: +0.59%
+
+## Experiment 5 — Cross-sectional rank + interaction features (v6)
+- Added 11 features: rank_ret_1/2/3/5, rank_momentum, rank_volatility,
+  reversal_x_volume, conditional_reversal, return_acceleration, vol_acceleration
+- Mean CV: 51.42% | Std: 1.05%
+- Equal-weight v6 vs weighted (0.35/0.25/0.40): flat, -0.0001 (noise)
+
+## Key research findings (today)
+1. Fold 5 consistently underperforms (~49.5%) but on inspection has
+   normal volatility (0.0246) and class balance (0.4987). Accounting for
+   within-day return correlation inflating effective SE, it is within
+   noise — NOT a regime break. Stopped optimizing against it.
+2. Ensemble diversity confirmed: pairwise prediction correlations
+   0.61–0.77. LR most decorrelated (0.61 w/ LGBM). Ensemble earns its keep.
+3. Three independent levers tested — features, hyperparameters, ensemble
+   weights — all plateau at ~51.4% CV. Conclusion: at signal ceiling for
+   this approach. CV sits ~0.001 above leaderboard (trustworthy).
+
+   
