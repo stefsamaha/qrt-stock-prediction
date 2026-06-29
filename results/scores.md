@@ -93,3 +93,17 @@
 - v4: CV 0.5143 → 0.5132
 - v6: CV 0.5142 → 0.5152
 - Gap is small and sign-variable (~±0.001), CV is trustworthy
+
+
+## Submission 5 — v7 4-model ensemble (BEST)
+- Public: 51.54% | CV: 51.56% | benchmark: 51.31% (+0.23%)
+- Added decorrelated MLP (32,16, alpha=1.0); avg corr 0.49/0.66/0.73
+- CV said +0.0014, leaderboard +0.0002 — both positive, both marginal
+- Gain concentrated in fold 1; MLP hurt no fold
+
+## CEILING CONCLUSION
+5 levers tested: cross-sectional features (+, real), MLP (+, marginal),
+hyperparameter tuning (−), stacking (− overfit meta-layer), 
+ensemble reweighting (flat), per-date threshold (flat).
+Signal ceiling for tree+linear+NN on this representation ≈ 51.5%.
+Leaderboard top 52.87% likely a different formulation, not a tweak.
